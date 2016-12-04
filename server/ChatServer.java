@@ -11,11 +11,10 @@ import server.gui.ControllerInterface;
 
 public class ChatServer extends Thread {
 
-	private DataOutputStream out;
+	private MessageSender mSender = null;
 	private BufferedReader in;
 	private ChatServerList chatServerList;
 	private String id;
-	private LinkedBlockingQueue<Message> messageQueue;
 	private ControllerInterface contrInterf;
 
 	public ChatServer(Socket socket, ChatServerList chatServerList,ControllerInterface contrInterf) {		
@@ -28,53 +27,24 @@ public class ChatServer extends Thread {
 		this.chatServerList = chatServerList;
 		this.contrInterf = contrInterf;
 		
+		
 		try {
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			out = new DataOutputStream(socket.getOutputStream());
+			this.mSender = new MessageSender(socket, contrInterf);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return;
 		}
-		messageQueue = new LinkedBlockingQueue<Message>();
-		Runnable r = new Runnable() {
-
-			public void run() {
-
-				while (true) {
-					Message msg;
-					try {
-						msg = messageQueue.take(); // blocks if no messages are
-													// available
-					} catch (InterruptedException e1) {
-						return;
-					}
-					try {
-						out.writeBytes(msg.getFullString() + "\n");
-						
-						String msgToController = (msg.getFullString() + " sent");
-						System.out.println(msgToController);				 // TODO: remove
-						contrInterf.addMessageToTextArea(msgToController);
-						
-					} catch (IOException e) {
-						e.printStackTrace();
-						interrupt();
-					}
-				}
-			}
-		};
-		new Thread(r).start();
 	}
 
 	public void addMessage(Message message) {
-		boolean isSuccessful;
-		do {
-			isSuccessful = messageQueue.offer(message);
-		} while (!isSuccessful);
+		this.mSender.addMessage(message);
 	}
 
 	@Override
 	public void interrupt() {
 		chatServerList.disconnect(this.id);
+		mSender.interrupt();
 		super.interrupt();
 	}
 
@@ -90,7 +60,7 @@ public class ChatServer extends Thread {
 			} while (str == null);
 
 			Message msg = new Message(str);
-			// register returns false if registration fails
+			// register returns false if connection fails
 			if (!chatServerList.connect(msg.getSender(), this)) {
 				this.interrupt();
 			}
