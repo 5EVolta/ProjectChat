@@ -1,13 +1,13 @@
 package server;
 
-import gui.*;
+import server.gui.ControllerInterface;
+import server.gui.Interface;
 
-public class MainServer {
+public class ServerMain {
 
-	public static void main(String argv[]){
-		ServerPort serverPort  = new ServerPort();
+	public static void main(String arg[]){
 		Interface gui = new Interface();
-		ServerConnection conServ = new ServerConnection(serverPort);	
+		ServerConnection conServ = new ServerConnection(Integer.parseInt(arg[0]));	
 		ControllerInterface contrInterf = new ControllerInterface(gui);
 		ChatServerList list = new ChatServerList(contrInterf);
 		

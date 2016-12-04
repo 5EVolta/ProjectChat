@@ -1,10 +1,13 @@
 package server;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import gui.ControllerInterface;
+import server.gui.ControllerInterface;
 
 public class ChatServer extends Thread {
 
@@ -88,7 +91,7 @@ public class ChatServer extends Thread {
 
 			Message msg = new Message(str);
 			// register returns false if registration fails
-			if (!chatServerList.register(msg.getSender(), this)) {
+			if (!chatServerList.connect(msg.getSender(), this)) {
 				this.interrupt();
 			}
 			this.id = msg.getSender();
