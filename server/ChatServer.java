@@ -66,15 +66,14 @@ public class ChatServer extends Thread {
 			// Reads messages from client
 			while (true) {
 				str = in.readLine();
-				if (str != null) {
-					if (!str.equals("")) {
-						msg = new Message(str);
-						if (msg.isValid() && msg.getSender().equals(this.id)) {
-							chatServerList.submit(msg);
-							msgToController = str + " submitted to ChatServerList";
-							contrInterf.addMessageToTextArea(msgToController);
-							System.out.println(msgToController); // TODO:remove
-						}
+				if (str != null && !str.equals("")) {
+					msg = new Message(str);
+					if (msg.isValid() && msg.getSender().equals(this.id)) {
+						chatServerList.submit(msg);
+						
+						msgToController = str + " submitted to ChatServerList";
+						contrInterf.addMessageToTextArea(msgToController);
+						System.out.println(msgToController); // TODO:remove
 					}
 				}
 			}
