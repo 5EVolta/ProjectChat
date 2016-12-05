@@ -17,7 +17,7 @@ public class ChatServer extends Thread {
 	private String id;
 	private ControllerInterface contrInterf;
 
-	public ChatServer(Socket socket, ChatServerList chatServerList,ControllerInterface contrInterf) {		
+	public ChatServer(Socket socket, ChatServerList chatServerList, ControllerInterface contrInterf) {
 		if (socket == null) {
 			throw new NullPointerException("Socket can't be null");
 		}
@@ -26,11 +26,11 @@ public class ChatServer extends Thread {
 		}
 		this.chatServerList = chatServerList;
 		this.contrInterf = contrInterf;
-		
-		
+
 		try {
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			this.mSender = new MessageSender(socket, contrInterf);
+			mSender.start();
 		} catch (IOException e) {
 			e.printStackTrace();
 			return;
@@ -50,7 +50,7 @@ public class ChatServer extends Thread {
 
 	public void run() {
 		// Registration on ChatServerList
-		String msgToController="new ChatServer running";
+		String msgToController = "new ChatServer running";
 		contrInterf.addMessageToTextArea(msgToController);
 		System.out.println(msgToController);
 		String str = "";
@@ -61,7 +61,7 @@ public class ChatServer extends Thread {
 
 			Message msg = new Message(str);
 			// register returns false if connection fails
-			if (!chatServerList.connect(msg.getSender(), this)) {
+			if (!msg.isValid() || !chatServerList.connect(msg.getSender(), this)) {
 				this.interrupt();
 			}
 			this.id = msg.getSender();
@@ -70,10 +70,13 @@ public class ChatServer extends Thread {
 				str = in.readLine();
 				if (str != null) {
 					if (!str.equals("")) {
-						chatServerList.submit(new Message(str), this.id);
-						msgToController = str + " submitted to ChatServerList";
-						contrInterf.addMessageToTextArea(msgToController);
-						System.out.println(msgToController); 					// TODO:remove
+						msg = new Message(str);
+						if (msg.isValid() && msg.getSender().equals(this.id)) {
+							chatServerList.submit(msg);
+							msgToController = str + " submitted to ChatServerList";
+							contrInterf.addMessageToTextArea(msgToController);
+							System.out.println(msgToController); // TODO:remove
+						}
 					}
 				}
 			}

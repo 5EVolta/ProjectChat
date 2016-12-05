@@ -1,6 +1,5 @@
 package server;
 
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import server.gui.ControllerInterface;
@@ -15,8 +14,8 @@ public class ChatServerList {
 		this.listaChatServer = new ConcurrentHashMap<String, ChatServer>();
 	}
 
-	public boolean connect(String ID, ChatServer chatserver) { // Adds the new													// user to the
-																// user list
+	// Adds the new user to the user list
+	public boolean connect(String ID, ChatServer chatserver) {
 		boolean response = true;
 
 		if (listaChatServer.containsKey(ID)) {
@@ -42,12 +41,13 @@ public class ChatServerList {
 		contrInterf.removeConnectionFromList(ID);
 	}
 
-	public void submit(Message message, String ID) { // Passes the message to
-														// the reciever's socket
-		if (listaChatServer.containsKey(message.getRecipient())) {
-			ChatServer receiver = listaChatServer.get(message.getRecipient());
-			receiver.addMessage(message);
-			String msg = message.getFullString() + " submitted to " + ID + " from ChatServerList";
+	// Passes the message to the reciever's socket
+	public void submit(Message message) {
+		String recp = message.getRecipient();
+		if (listaChatServer.containsKey(recp)) {
+			ChatServer recipient = listaChatServer.get(recp);
+			recipient.addMessage(message);
+			String msg = message.getFullString() + " submitted to " + recp + " from ChatServerList";
 			System.out.println(msg);
 			contrInterf.addMessageToTextArea(msg);
 		}
