@@ -21,4 +21,8 @@ public class Message {
 	public String getSender(){return sender;}
 	public String getFullString(){return fullString;}
 	
+	public boolean isValid(){
+		return SimpleProtocol.isValid(fullString);
+	}
+	
 }
