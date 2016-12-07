@@ -11,7 +11,7 @@ public class ServerMain {
 		ControllerInterface contrInterf = new ControllerInterface(gui);
 		ChatServerList list = new ChatServerList(contrInterf);
 		
-		conServ.wait(list,contrInterf);
+		conServ.wait(list, contrInterf);
 	}
 
 }
