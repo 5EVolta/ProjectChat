@@ -13,7 +13,7 @@ public class ServerConnection {
 	private int serverPort = 4000;
 
 	public ServerConnection(int serverPort) {
-		if (serverPort >= 1023 && serverPort <= 65535){
+		if (!(serverPort >= 1023 && serverPort <= 65535)){
 			throw new IllegalArgumentException("Invalid port number");
 		}
 		this.serverPort = serverPort;
