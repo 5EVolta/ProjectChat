@@ -2,15 +2,11 @@ package server;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-import server.gui.ControllerInterface;
-
 public class ChatServerList {
 
 	private ConcurrentHashMap<String, ChatServer> listaChatServer;
-	private ControllerInterface contrInterf;
 
-	public ChatServerList(ControllerInterface contrInterf) {
-		this.contrInterf = contrInterf;
+	public ChatServerList() {
 		this.listaChatServer = new ConcurrentHashMap<String, ChatServer>();
 	}
 
@@ -24,10 +20,7 @@ public class ChatServerList {
 
 		else {
 			listaChatServer.put(ID, chatserver);
-			String msg = ID + " registered on ChatServerList";
-			System.out.println(msg); // TODO: remove
-			contrInterf.addMessageToTextArea(msg);
-			contrInterf.addConnectionToList(ID);
+			System.out.println(ID + " registered on ChatServerList"); // TODO: remove
 		}
 
 		return response;
@@ -35,10 +28,7 @@ public class ChatServerList {
 
 	public void disconnect(String ID) {
 		listaChatServer.remove(ID);
-		String msg = ID + " disconnected from ChatServerList";
-		System.out.println(msg); // TODO: remove
-		contrInterf.addMessageToTextArea(msg);
-		contrInterf.removeConnectionFromList(ID);
+		System.out.println(ID + " disconnected from ChatServerList"); // TODO: remove
 	}
 
 	// Passes the message to the reciever's socket
@@ -47,9 +37,7 @@ public class ChatServerList {
 		if (listaChatServer.containsKey(recp)) {
 			ChatServer recipient = listaChatServer.get(recp);
 			recipient.addMessage(message);
-			String msg = message.getFullString() + " submitted to " + recp + " from ChatServerList";
-			System.out.println(msg);
-			contrInterf.addMessageToTextArea(msg);
+			System.out.println(message.getFullString() + " submitted to " + recp + " from ChatServerList");
 		}
 	}
 

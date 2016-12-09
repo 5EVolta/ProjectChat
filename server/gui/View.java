@@ -14,7 +14,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-public class Interface implements ActionListener {
+public class View implements ActionListener {
 
 	private Frame f;
 	private Panel pan;
@@ -24,7 +24,7 @@ public class Interface implements ActionListener {
 	private TextField textPort;
 	private GridBagConstraints gbc;
 
-	public Interface() {
+	public View() {
 
 		this.f = new Frame("Server");
 

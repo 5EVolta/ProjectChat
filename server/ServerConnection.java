@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import server.gui.ControllerInterface;
-
 public class ServerConnection {
 
 	private ServerSocket serverSock = null;
@@ -19,7 +17,7 @@ public class ServerConnection {
 		this.serverPort = serverPort;
 	}
 
-	public void wait(ChatServerList list, ControllerInterface contrInterf) {
+	public void wait(ChatServerList list) {
 
 		// Istanzia il server socket
 		try {
@@ -34,7 +32,7 @@ public class ServerConnection {
 			try {
 				System.out.println("Server in attesa sulla porta " + serverPort);
 				clientSock = serverSock.accept();
-				cs = new ChatServer(clientSock, list, contrInterf);
+				cs = new ChatServer(clientSock, list);
 				cs.start();
 			} catch (IOException e) {
 				e.printStackTrace();

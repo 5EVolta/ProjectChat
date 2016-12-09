@@ -1,18 +1,18 @@
 package server;
 
 import server.gui.ControllerInterface;
-import server.gui.Interface;
+import server.gui.View;
 
 public class ServerMain {
 
 	public static void main(String arg[]){
-		Interface gui = new Interface();
+		View gui = new View();
 		//ServerConnection conServ = new ServerConnection(Integer.parseInt(arg[0]));	
 		ServerConnection conServ = new ServerConnection(4000);
 		ControllerInterface contrInterf = new ControllerInterface(gui);
-		ChatServerList list = new ChatServerList(contrInterf);
+		ChatServerList list = new ChatServerList();
 		
-		conServ.wait(list, contrInterf);
+		conServ.wait(list);
 	}
 
 }

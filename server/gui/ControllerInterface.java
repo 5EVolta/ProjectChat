@@ -2,10 +2,10 @@ package server.gui;
 
 public class ControllerInterface {
 
-	private Interface gui;
+	private View gui;
 	
-	public ControllerInterface(Interface gui){
-		this.gui=gui;
+	public ControllerInterface(View gui){
+		this.gui = gui;
 	}
 	
 	public void addMessageToTextArea(String msg){
