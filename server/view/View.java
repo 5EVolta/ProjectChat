@@ -1,4 +1,4 @@
-package server.gui;
+package server.view;
 
 import java.awt.Button;
 import java.awt.Frame;
@@ -10,11 +10,12 @@ import java.awt.Panel;
 import java.awt.TextArea;
 import java.awt.TextField;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-public class View implements ActionListener {
+import server.controller.Controller;
+
+public class View {
 
 	private Frame f;
 	private Panel pan;
@@ -24,13 +25,12 @@ public class View implements ActionListener {
 	private TextField textPort;
 	private GridBagConstraints gbc;
 
-	public View() {
-
+	public View(Controller controller) {
 		this.f = new Frame("Server");
 
 		pan = new Panel();
 
-		labConn = new Label("Connessioni Attive");
+		labConn = new Label("Active Connections");
 		textConn = new TextArea(20, 30);
 		textConn.setEditable(false);
 		labMess = new Label("LOG");
@@ -38,7 +38,7 @@ public class View implements ActionListener {
 		textMess.setEditable(false);
 
 		butStart = new Button("Start Server");
-		butStart.addActionListener(this);
+		butStart.addActionListener(controller);
 
 		butPort = new Button("OK");
 		textPort = new TextField("Porta");
@@ -109,11 +109,6 @@ public class View implements ActionListener {
 
 	public TextField getTextPort() {
 		return textPort;
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-
 	}
 
 }

@@ -1,4 +1,4 @@
-package server.gui;
+package server.view;
 
 public class ControllerInterface {
 
