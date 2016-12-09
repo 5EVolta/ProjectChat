@@ -1,47 +1,58 @@
 package server.view;
 
-import java.awt.Button;
-import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Label;
-import java.awt.Panel;
-import java.awt.TextArea;
-import java.awt.TextField;
-import java.awt.event.ActionEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+
+import server.ChatServer;
+import server.ChatServerList;
 import server.controller.Controller;
 
-public class View {
+public class View implements PropertyChangeListener {
 
-	private Frame f;
-	private Panel pan;
-	private Label labConn, labMess;
-	private Button butStart, butPort;
-	private TextArea textConn, textMess;
-	private TextField textPort;
+	private JFrame f;
+	private JPanel pan;
+	private JLabel labConn, labMess;
+	private JButton butStart, butPort;
+	private JTextArea textConn, textMess;
+	private JTextField textPort;
 	private GridBagConstraints gbc;
 
 	public View(Controller controller) {
-		this.f = new Frame("Server");
+		this.f = new JFrame("Server");
 
-		pan = new Panel();
+		pan = new JPanel();
 
-		labConn = new Label("Active Connections");
-		textConn = new TextArea(20, 30);
+		labConn = new JLabel("Active Connections");
+		textConn = new JTextArea(20, 30);
+		textConn.setWrapStyleWord(true);
 		textConn.setEditable(false);
-		labMess = new Label("LOG");
-		textMess = new TextArea(20, 80);
-		textMess.setEditable(false);
+		JScrollPane textConnScroll = new JScrollPane(textMess, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
-		butStart = new Button("Start Server");
+		labMess = new JLabel("LOG");
+		textMess = new JTextArea(20, 80);
+		textMess.setWrapStyleWord(true);
+		textMess.setEditable(false);
+		JScrollPane textMessScroll = new JScrollPane(textMess, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+		butStart = new JButton("Start Server");
 		butStart.addActionListener(controller);
 
-		butPort = new Button("OK");
-		textPort = new TextField("Porta");
+		butPort = new JButton("OK");
+		textPort = new JTextField("Porta");
+		//textPort.addKeyListener(controller); on day...
 
 		pan.setLayout(new GridBagLayout());
 		gbc = new GridBagConstraints();
@@ -72,43 +83,62 @@ public class View {
 		gbc.anchor = GridBagConstraints.CENTER;
 		gbc.gridx = 0;
 		gbc.gridy = 2;
-		pan.add(textConn, gbc);
+		pan.add(textConnScroll, gbc);
 
 		gbc.gridx = 1;
 		gbc.gridwidth = GridBagConstraints.REMAINDER;
-		pan.add(textMess, gbc);
+		pan.add(textMessScroll, gbc);
 
 		f.add(pan);
 
-		f.addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent we) {
-				System.exit(0);
-			}
-		});
+		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		f.setLocationRelativeTo(null);
 
 		f.pack();
 		f.setVisible(true);
 	}
 
-	public Button getButStart() {
+	public JButton getButStart() {
 		return butStart;
 	}
 
-	public Button getButPort() {
+	public JButton getButPort() {
 		return butPort;
 	}
 
-	public TextArea getTextConn() {
+	public JTextArea getTextConn() {
 		return textConn;
 	}
 
-	public TextArea getTextMess() {
+	public JTextArea getTextMess() {
 		return textMess;
 	}
 
-	public TextField getTextPort() {
+	public JTextField getTextPort() {
 		return textPort;
+	}
+
+	public void propertyChange(PropertyChangeEvent e) {
+
+		if (e.getPropertyName().equals("chatServerList") && e.getSource() instanceof ChatServerList) {
+
+			ChatServer cs = null;
+			if (e.getOldValue() == null && e.getNewValue() != null) {
+				try {
+					cs = (ChatServer) e.getNewValue();
+					System.out.println(cs.getName() + " connected");
+				} catch (Exception ex) {
+				}
+			}
+			if (e.getNewValue() == null && e.getOldValue() != null) {
+				try {
+					cs = (ChatServer) e.getOldValue();
+					System.out.println(cs.getName() + " disconnected");
+				} catch (Exception ex) {
+				}
+			}
+		}
+
 	}
 
 }
