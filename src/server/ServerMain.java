@@ -1,6 +1,8 @@
 package server;
 
 import server.controller.Controller;
+import server.model.ChatServerList;
+import server.model.ServerConnection;
 import server.view.View;
 
 public class ServerMain {

@@ -14,9 +14,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import server.ChatServer;
-import server.ChatServerList;
 import server.controller.Controller;
+import server.model.ChatServer;
+import server.model.ChatServerList;
 
 public class View implements PropertyChangeListener {
 

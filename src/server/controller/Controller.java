@@ -5,7 +5,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 
-import server.ServerConnection;
+import server.model.ServerConnection;
 import server.view.View;
 
 public class Controller implements ActionListener {

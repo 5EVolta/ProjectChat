@@ -3,8 +3,8 @@ package server.view;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import server.ChatServer;
-import server.ChatServerList;
+import server.model.ChatServer;
+import server.model.ChatServerList;
 
 public class SimpleView implements PropertyChangeListener {
 
