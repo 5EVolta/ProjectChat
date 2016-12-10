@@ -28,13 +28,12 @@ public class MessageSender extends Thread {
 			} catch (InterruptedException e1) {
 				return;
 			}
-				out.println(msg.getFullString());
-				
-				System.out.println(msg.getFullString() + " sent"); // TODO: remove
+			out.println(msg.getFullString());
+			System.out.println(msg.getFullString() + " sent"); // TODO: remove
 		}
 	}
-	
-	public void addMessage(Message message){
+
+	public void addMessage(Message message) {
 		boolean isSuccessful;
 		do {
 			isSuccessful = messageQueue.offer(message);

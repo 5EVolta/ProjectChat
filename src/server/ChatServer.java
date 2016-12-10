@@ -32,10 +32,14 @@ public class ChatServer extends Thread {
 	}
 
 	public void addMessage(Message message) {
-		this.mSender.addMessage(message);
+		if (mSender.isAlive()) {
+			mSender.addMessage(message);
+		}else{
+			this.interrupt();
+		}
 	}
-	
-	public String getUserId(){
+
+	public String getUserId() {
 		return this.userId;
 	}
 
@@ -46,21 +50,27 @@ public class ChatServer extends Thread {
 		super.interrupt();
 	}
 
-	public void run() {
-		// Registration on ChatServerList;
-		System.out.println("new ChatServer running");
+	private void connectToCSL() throws IOException {
 		String str = "";
-		try {
-			do {
-				str = in.readLine();
-			} while (str == null);
+		do {
+			str = in.readLine();
+		} while (str == null);
 
-			Message msg = new Message(str);
-			/** register returns false if connection fails */
-			if (!msg.isValid() || !chatServerList.connect(msg.getSender(), this)) {
-				this.interrupt();
-			}
-			this.userId = msg.getSender();
+		Message msg = new Message(str);
+		/** connect returns false if connection fails */
+		if (!msg.isValid() || !chatServerList.connect(msg.getSender(), this)) {
+			this.interrupt();
+		}
+		this.userId = msg.getSender();
+	}
+
+	public void run() {
+		// System.out.println("new ChatServer running");
+		Message msg;
+		String str;
+		try {
+			this.connectToCSL();
+
 			/** Reads messages from client */
 			while (true) {
 				str = in.readLine();
