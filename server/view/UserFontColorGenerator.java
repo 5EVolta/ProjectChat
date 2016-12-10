@@ -1,4 +1,4 @@
-package server.gui;
+package server.view;
 
 import java.awt.Color;
 import java.util.Random;

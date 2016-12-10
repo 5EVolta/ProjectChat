@@ -5,22 +5,17 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import server.gui.ControllerInterface;
-
 public class MessageSender extends Thread {
 
 	private PrintWriter out = null;
 	private LinkedBlockingQueue<Message> messageQueue;
-	private ControllerInterface contrInterf;
 
-	public MessageSender(Socket socket, ControllerInterface contrInterf) throws IOException {
+	public MessageSender(Socket socket) throws IOException {
 		if (socket == null) {
 			throw new NullPointerException("Socket can't be null");
 		}
 		out = new PrintWriter(socket.getOutputStream());
 		messageQueue = new LinkedBlockingQueue<>();
-		
-		this.contrInterf = contrInterf;
 	}
 
 	public void run() {
@@ -34,10 +29,8 @@ public class MessageSender extends Thread {
 				return;
 			}
 				out.println(msg.getFullString());
-
-				String msgToController = (msg.getFullString() + " sent");
-				System.out.println(msgToController); // TODO: remove
-				contrInterf.addMessageToTextArea(msgToController);
+				
+				System.out.println(msg.getFullString() + " sent"); // TODO: remove
 		}
 	}
 	
