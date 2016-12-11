@@ -25,4 +25,8 @@ public class Message {
 		return SimpleProtocol.isValid(fullString);
 	}
 	
+	public boolean isLoginMessage(){
+		return isValid() && recipient.equals("login");
+	}
+	
 }

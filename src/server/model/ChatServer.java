@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.util.Date;
 
 public class ChatServer extends Thread {
 
@@ -34,7 +35,7 @@ public class ChatServer extends Thread {
 	public void addMessage(Message message) {
 		if (mSender.isAlive()) {
 			mSender.addMessage(message);
-		}else{
+		} else {
 			this.interrupt();
 		}
 	}
@@ -50,27 +51,38 @@ public class ChatServer extends Thread {
 		super.interrupt();
 	}
 
-	private void connectToCSL() throws IOException {
+	private boolean tryLogin(Message msg) {
+		if (msg.isLoginMessage()) {
+			UserUtility utils = UserUtility.getInstance();
+			if (utils.login(msg.getSender(), msg.getMsg())) {
+				this.interrupt();
+			}
+		}
+		return msg.isLoginMessage();
+	}
+
+	private void init() throws IOException {
 		String str = "";
+		long terminInMillis = new Date().getTime() + 60000;
+		Date termin = new Date(terminInMillis);
 		do {
 			str = in.readLine();
-		} while (str == null);
-
+		} while (str == null && new Date().before(termin));
 		Message msg = new Message(str);
-		/** connect returns false if connection fails */
-		if (!msg.isValid() || !chatServerList.connect(msg.getSender(), this)) {
-			this.interrupt();
+
+		if (this.tryLogin(msg)) {
+			if (!chatServerList.connect(msg.getSender(), this)) {
+				this.interrupt();
+			}
+			this.userId = msg.getSender();
 		}
-		this.userId = msg.getSender();
 	}
 
 	public void run() {
-		// System.out.println("new ChatServer running");
 		Message msg;
 		String str;
 		try {
-			this.connectToCSL();
-
+			this.init();
 			/** Reads messages from client */
 			while (true) {
 				str = in.readLine();

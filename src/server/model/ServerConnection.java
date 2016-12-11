@@ -13,21 +13,21 @@ public class ServerConnection {
 	private ChatServerList list;
 	private boolean isRunning;
 
-	public ServerConnection(ChatServerList list){
-		if(list == null){
+	public ServerConnection(ChatServerList list) {
+		if (list == null) {
 			throw new IllegalArgumentException("ChatServerList can't be null");
 		}
 		this.list = list;
 	}
-	
+
 	public ServerConnection(int serverPort, ChatServerList list) {
 		this(list);
 		this.setPort(serverPort);
 		this.serverPort = serverPort;
 	}
-	
-	private void setPort(int serverPort){
-		if (serverPort < 1024 || serverPort > 65535){
+
+	private void setPort(int serverPort) {
+		if (serverPort < 1024 || serverPort > 65535) {
 			throw new IllegalArgumentException("Invalid port number");
 		}
 		this.serverPort = serverPort;
@@ -38,30 +38,25 @@ public class ServerConnection {
 		// Istanzia il server socket
 		try {
 			serverSock = new ServerSocket(serverPort);
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
 
-		ChatServer cs = null;
-		isRunning = true;
-		while (isRunning) {
-			try {
+			ChatServer cs = null;
+			isRunning = true;
+			while (isRunning) {
 				System.out.println("Server in attesa sulla porta " + serverPort);
 				clientSock = serverSock.accept();
 				cs = new ChatServer(clientSock, list);
 				cs.start();
-			} catch (IOException e) {
-				e.printStackTrace();
-				try {
-					serverSock.close();
-				} catch (IOException ioe) {
-					ioe.printStackTrace();
-				}
+			}
+		} catch (IOException e) {
+			try {
+				serverSock.close();
+			} catch (IOException e1) {
+				e1.printStackTrace();
 			}
 		}
 	}
-	
-	public void stop(){
+
+	public void stop() {
 		this.isRunning = false;
 		try {
 			this.serverSock.close();
@@ -70,9 +65,9 @@ public class ServerConnection {
 			e.printStackTrace();
 		}
 	}
-	
-	public void changePort(int serverPort){
-		if(this.isRunning){
+
+	public void changePort(int serverPort) {
+		if (this.isRunning) {
 			throw new IllegalStateException("serverPort can't be changed when ConnectionServer is running");
 		}
 		this.setPort(serverPort);

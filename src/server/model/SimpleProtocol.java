@@ -24,5 +24,9 @@ public class SimpleProtocol {
 		}
 		return false;
 	}
+	
+	public static boolean isValidLogin(String fullString){
+		return isValid(fullString) && getRecipient(fullString).equals("login");
+	}
 
 }
