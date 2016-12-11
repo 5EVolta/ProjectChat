@@ -32,11 +32,13 @@ public class Controller implements ActionListener {
 			if(btn.getText().equals("Start Server")){
 				servConn.start();
 			}
-			if(btn.getText().equals("OK")){
-				try{
-					String txt = view.getTextPort().getText();
-					servConn.changePort(Integer.parseInt(txt));
-				}catch(NumberFormatException | IllegalStateException nfe){}
+			else {
+				if(btn.getText().equals("OK")){
+					try{
+						String txt = view.getTextPort().getText();
+						servConn.changePort(Integer.parseInt(txt));
+					}catch(NumberFormatException | IllegalStateException nfe){}
+				}
 			}
 		}
 		

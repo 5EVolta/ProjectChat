@@ -10,7 +10,7 @@ public class ServerMain {
 	public static void main(String arg[]){
 		
 		ChatServerList list = new ChatServerList();
-		ServerConnection conServ = new ServerConnection(4000, list);
+		ServerConnection conServ = new ServerConnection(list);
 		
 		Controller contr = new Controller(conServ);
 		View view = new View(contr);

@@ -23,13 +23,12 @@ public class MessageSender extends Thread {
 		while (true) {
 			Message msg;
 			try {
-				msg = messageQueue.take(); // blocks if no messages are
-											// available
+				msg = messageQueue.take(); // blocks if no messages are available
 			} catch (InterruptedException e1) {
 				return;
 			}
 			out.println(msg.getFullString());
-			System.out.println(msg.getFullString() + " sent"); // TODO: remove
+			//System.out.println(msg.getFullString() + " sent"); // TODO: remove
 		}
 	}
 

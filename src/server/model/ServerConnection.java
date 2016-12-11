@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+//TODO: use a thread pls boi
 public class ServerConnection {
 
 	private ServerSocket serverSock = null;
