@@ -1,5 +1,7 @@
 package server.model;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -8,6 +10,7 @@ import java.util.Date;
 
 public class ChatServer extends Thread {
 
+	private PropertyChangeSupport pcs;
 	private MessageSender mSender = null;
 	private BufferedReader in;
 	private ChatServerList chatServerList;
@@ -21,6 +24,7 @@ public class ChatServer extends Thread {
 			throw new NullPointerException("ChatServerList can't be null");
 		}
 		this.chatServerList = chatServerList;
+		this.pcs = new PropertyChangeSupport(this);
 
 		try {
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -54,7 +58,7 @@ public class ChatServer extends Thread {
 	private boolean tryLogin(Message msg) {
 		if (msg.isLoginMessage()) {
 			UserUtility utils = UserUtility.getInstance();
-			if (utils.login(msg.getSender(), msg.getMsg())) {
+			if (!utils.login(msg.getSender(), msg.getMsg())) {
 				this.interrupt();
 			}
 		}
@@ -70,15 +74,18 @@ public class ChatServer extends Thread {
 		} while (str == null && new Date().before(termin));
 		Message msg = new Message(str);
 
+		this.userId = msg.getSender();
+		
 		if (this.tryLogin(msg)) {
 			if (!chatServerList.connect(msg.getSender(), this)) {
 				this.interrupt();
 			}
-			this.userId = msg.getSender();
 		}
+		System.out.println("ChatServer: " + this.getUserId() + " init completed!");
 	}
 
 	public void run() {
+		//pcs.firePropertyChange("ChatServer", null, this);
 		Message msg;
 		String str;
 		try {
@@ -90,6 +97,8 @@ public class ChatServer extends Thread {
 					msg = new Message(str);
 					if (msg.isValid() && msg.getSender().equals(this.userId)) {
 						chatServerList.submit(msg);
+						pcs.firePropertyChange("receivedMessage", null, msg);
+						System.out.println("Received " + msg.getFullString());
 					}
 				}
 			}
@@ -97,5 +106,15 @@ public class ChatServer extends Thread {
 			e.printStackTrace();
 			this.interrupt();
 		}
+	}
+	
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		pcs.addPropertyChangeListener(listener);
+		mSender.addPropertyChangeListener(listener);
+	}
+
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		pcs.removePropertyChangeListener(listener);
+		mSender.removePropertyChangeListener(listener);
 	}
 }

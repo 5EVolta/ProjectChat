@@ -1,5 +1,7 @@
 package server.model;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -7,6 +9,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class MessageSender extends Thread {
 
+	private PropertyChangeSupport pcs;
 	private PrintWriter out = null;
 	private LinkedBlockingQueue<Message> messageQueue;
 
@@ -14,7 +17,8 @@ public class MessageSender extends Thread {
 		if (socket == null) {
 			throw new NullPointerException("Socket can't be null");
 		}
-		out = new PrintWriter(socket.getOutputStream());
+		pcs = new PropertyChangeSupport(this);
+		out = new PrintWriter(socket.getOutputStream(), true);
 		messageQueue = new LinkedBlockingQueue<>();
 	}
 
@@ -23,12 +27,15 @@ public class MessageSender extends Thread {
 		while (true) {
 			Message msg;
 			try {
-				msg = messageQueue.take(); // blocks if no messages are available
+				msg = messageQueue.take(); // blocks if no messages are
+											// available
 			} catch (InterruptedException e1) {
+				e1.printStackTrace();
 				return;
 			}
 			out.println(msg.getFullString());
-			//System.out.println(msg.getFullString() + " sent"); // TODO: remove
+			pcs.firePropertyChange("sentMessage", null, msg);
+			System.out.println(msg.getFullString() + " sent");
 		}
 	}
 
@@ -37,5 +44,13 @@ public class MessageSender extends Thread {
 		do {
 			isSuccessful = messageQueue.offer(message);
 		} while (!isSuccessful);
+	}
+	
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		pcs.addPropertyChangeListener(listener);
+	}
+
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		pcs.removePropertyChangeListener(listener);
 	}
 }

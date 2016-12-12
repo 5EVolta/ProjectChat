@@ -7,17 +7,37 @@ import java.net.Socket;
 //TODO: use a thread pls boi
 public class ServerConnection {
 
-	private ServerSocket serverSock = null;
-	private Socket clientSock = null;
-	private int serverPort = 4000;
+	private int serverPort = -1;
 	private ChatServerList list;
-	private boolean isRunning;
+	private Runnable serverConnector;
+	private Thread running; 
+	
 
 	public ServerConnection(ChatServerList list) {
 		if (list == null) {
 			throw new IllegalArgumentException("ChatServerList can't be null");
 		}
 		this.list = list;
+		
+		serverConnector = () -> {
+			System.out.println("new ServerConnector running!"); //TODO: remove
+			ServerSocket serverSock = null;
+			try {
+				serverSock = new ServerSocket(this.serverPort);
+				Socket sock;
+				while(true){
+					sock = serverSock.accept();
+					new ChatServer(sock, list).start();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+				try {
+					serverSock.close();
+				} catch (IOException | NullPointerException e1) {
+					e1.printStackTrace();
+				}
+			}
+		};
 	}
 
 	public ServerConnection(int serverPort, ChatServerList list) {
@@ -26,6 +46,21 @@ public class ServerConnection {
 		this.serverPort = serverPort;
 	}
 
+	public void start() {
+		if(running == null || !running.isAlive()){
+			running = new Thread(serverConnector);
+			running.start();
+		}
+	}
+
+	public void stop() {
+		if(running != null){
+			running.interrupt();
+			running = null;
+			System.out.println("ServerConnector stopped");
+		}
+	}
+	
 	private void setPort(int serverPort) {
 		if (serverPort < 1024 || serverPort > 65535) {
 			throw new IllegalArgumentException("Invalid port number");
@@ -33,43 +68,14 @@ public class ServerConnection {
 		this.serverPort = serverPort;
 	}
 
-	public void start() {
-
-		// Istanzia il server socket
-		try {
-			serverSock = new ServerSocket(serverPort);
-
-			ChatServer cs = null;
-			isRunning = true;
-			while (isRunning) {
-				System.out.println("Server in attesa sulla porta " + serverPort);
-				clientSock = serverSock.accept();
-				cs = new ChatServer(clientSock, list);
-				cs.start();
-			}
-		} catch (IOException e) {
-			try {
-				serverSock.close();
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
-		}
-	}
-
-	public void stop() {
-		this.isRunning = false;
-		try {
-			this.serverSock.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
 	public void changePort(int serverPort) {
-		if (this.isRunning) {
+		if (this.running != null && this.running.isAlive()) {
 			throw new IllegalStateException("serverPort can't be changed when ConnectionServer is running");
 		}
 		this.setPort(serverPort);
+	}
+	
+	public boolean portIsSet(){
+		return serverPort != -1;
 	}
 }

@@ -1,20 +1,12 @@
 package server.view;
 
-
 import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.HeadlessException;
 import java.awt.Insets;
 import java.awt.Point;
-import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.Locale;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -27,7 +19,8 @@ import javax.swing.JTextField;
 import server.controller.Controller;
 import server.model.ChatServer;
 import server.model.ChatServerList;
-import sun.font.GraphicComponent;
+import server.model.Message;
+import server.model.MessageSender;
 
 public class View implements PropertyChangeListener {
 
@@ -41,7 +34,7 @@ public class View implements PropertyChangeListener {
 
 	public View(Controller controller) {
 		this.f = new JFrame("Server");
-		
+
 		pan = new JPanel();
 
 		labConn = new JLabel("Active Connections");
@@ -57,7 +50,7 @@ public class View implements PropertyChangeListener {
 		textLog.setEditable(false);
 		JScrollPane textLogScroll = new JScrollPane(textLog, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		
+
 		labMess = new JLabel("Messagges");
 		textMess = new JTextArea(15, 80);
 		textMess.setWrapStyleWord(true);
@@ -66,18 +59,21 @@ public class View implements PropertyChangeListener {
 				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
 		butStart = new JButton("Start Server");
-		//butStart.setBackground(Color.WHITE);
+		// butStart.setBackground(Color.WHITE);
 		butStart.setForeground(Color.GREEN);
 		butStart.addActionListener(controller);
+		butStart.setEnabled(false);
 
 		butStop = new JButton("Stop Server");
-		//butStop.setBackground(Color.WHITE);
+		// butStop.setBackground(Color.WHITE);
 		butStop.setForeground(Color.RED);
-		//butStop.addActionListener(controller);
-		
+		butStop.addActionListener(controller);
+		butStop.setEnabled(false);
+
 		butPort = new JButton("OK");
+		butPort.addActionListener(controller);
 		textPort = new JTextField("Porta");
-		//textPort.addKeyListener(controller); one day...
+		// textPort.addKeyListener(controller); one day...
 
 		pan.setLayout(new GridBagLayout());
 		gbc = new GridBagConstraints();
@@ -87,7 +83,7 @@ public class View implements PropertyChangeListener {
 		gbc.gridy = 0;
 		gbc.anchor = GridBagConstraints.LINE_START;
 		pan.add(butStart, gbc);
-		
+
 		gbc.anchor = GridBagConstraints.LINE_END;
 		gbc.gridx = 0;
 		gbc.gridy = 0;
@@ -104,13 +100,13 @@ public class View implements PropertyChangeListener {
 		gbc.insets = new Insets(20, 10, 20, 10);
 		gbc.gridx = 2;
 		gbc.gridy = 0;
-		gbc.ipadx = 100;		
+		gbc.ipadx = 100;
 		gbc.ipady = 5;
 		gbc.anchor = GridBagConstraints.LINE_START;
 		pan.add(butPort, gbc);
 
 		gbc.insets = new Insets(5, 5, 5, 5);
-		gbc.ipadx = 0;	
+		gbc.ipadx = 0;
 		gbc.ipady = 0;
 		gbc.gridx = 0;
 		gbc.gridy = 1;
@@ -133,12 +129,12 @@ public class View implements PropertyChangeListener {
 		gbc.anchor = GridBagConstraints.CENTER;
 		gbc.gridwidth = GridBagConstraints.REMAINDER;
 		pan.add(textLogScroll, gbc);
-		
+
 		gbc.gridx = 1;
 		gbc.gridy = 3;
 		gbc.anchor = GridBagConstraints.FIRST_LINE_START;
 		pan.add(labMess, gbc);
-		
+
 		gbc.gridx = 1;
 		gbc.gridy = 3;
 		gbc.anchor = GridBagConstraints.CENTER;
@@ -148,30 +144,27 @@ public class View implements PropertyChangeListener {
 		f.add(pan);
 
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		f.setLocation(new Point(200,150));
+		f.setLocation(new Point(200, 150));
 
 		f.pack();
 		f.setVisible(true);
 	}
 
-	public JButton getButStart() {
-		return butStart;
+	public void setEnabledButStart(boolean state) {
+		butStart.setEnabled(state);
 	}
 
-	public JButton getButPort() {
-		return butPort;
+	public void setEnabledButStop(boolean state) {
+		butStop.setEnabled(state);
 	}
 
-	public JTextArea getTextConn() {
-		return textConn;
+	public void setEnabledPortValue(boolean state) {
+		textPort.setEnabled(state);
+		butPort.setEnabled(state);
 	}
 
-	public JTextArea getTextMess() {
-		return textLog;
-	}
-
-	public JTextField getTextPort() {
-		return textPort;
+	public String getPortText() {
+		return textPort.getText();
 	}
 
 	public void propertyChange(PropertyChangeEvent e) {
@@ -182,16 +175,27 @@ public class View implements PropertyChangeListener {
 			if (e.getOldValue() == null && e.getNewValue() != null) {
 				try {
 					cs = (ChatServer) e.getNewValue();
-					System.out.println(cs.getName() + " connected");
+					textLog.append(cs.getUserId() + " connected\n");
 				} catch (Exception ex) {
 				}
 			}
 			if (e.getNewValue() == null && e.getOldValue() != null) {
 				try {
 					cs = (ChatServer) e.getOldValue();
-					System.out.println(cs.getName() + " disconnected");
+					textLog.append(cs.getUserId() + " disconnected\n");
 				} catch (Exception ex) {
 				}
+			}
+		} else if (e.getPropertyName().equals("ChatServer") && e.getSource() instanceof ChatServer) {
+			if (e.getOldValue() == null && e.getNewValue() instanceof ChatServer) {
+				textLog.append("new ChatServer running\n");
+			}
+		} else if (e.getOldValue() == null && e.getNewValue() instanceof Message) {
+			Message msg = (Message) e.getNewValue();
+			if(e.getSource() instanceof ChatServer && e.getPropertyName().equals("receivedMessage")){
+				textMess.append("Received: " + msg.getFullString() + "\n");
+			}else if(e.getSource() instanceof MessageSender && e.getPropertyName().equals("sentMessage")){
+				textMess.append("Sent: " + msg.getFullString() + "\n");
 			}
 		}
 

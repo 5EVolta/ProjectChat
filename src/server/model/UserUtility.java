@@ -4,20 +4,14 @@ public class UserUtility {
 	
 	private LoginUtility login;
 	//private RegisterUtility register;
-	private static UserUtility instance;
+	private static UserUtility instance = new UserUtility();
 	
 	public static UserUtility getInstance(){
-		if(instance == null){
-			synchronized(instance){
-				if(instance == null){
-					instance = new UserUtility();
-				}
-			}
-		}
 		return instance;
 	}
 	
 	private UserUtility(){
+		login = new LoginUtility();
 	}
 	
 	public boolean login(String userId, String password){

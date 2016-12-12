@@ -17,8 +17,6 @@ public class ServerMain {
 		contr.setView(view);
 		
 		list.addPropertyChangeListener(view);
-		
-		//conServ.start();
 	}
 
 }

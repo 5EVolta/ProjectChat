@@ -9,6 +9,7 @@ public class ChatServerList {
 
 	private PropertyChangeSupport pcs;
 	private ConcurrentHashMap<String, ChatServer> chatServerList;
+	private PropertyChangeListener listener;
 
 	public ChatServerList() {
 		pcs = new PropertyChangeSupport(this);
@@ -26,40 +27,43 @@ public class ChatServerList {
 		else {
 			chatServerList.put(ID, chatserver);
 			pcs.firePropertyChange("chatServerList", null, chatserver);
-			System.out.println(ID + " registered on ChatServerList"); // TODO: remove
+			System.out.println(ID + " connected on ChatServerList"); // TODO: remove
+			chatserver.addPropertyChangeListener(listener);
 		}
 
 		return response;
 	}
 
 	public void disconnect(String ID) {
-		pcs.firePropertyChange("chatServerList", chatServerList.get(ID), null);
-		chatServerList.remove(ID);
-		System.out.println(ID + " disconnected from ChatServerList"); // TODO: remove
+		if (ID != null) {
+			pcs.firePropertyChange("chatServerList", chatServerList.get(ID), null);
+			chatServerList.remove(ID);
+		}
 	}
 
 	// Passes the message to the reciever's socket
 	public void submit(Message message) {
 		String recp = message.getRecipient();
-		if (chatServerList.containsKey(recp)) {
+		if (message.isValid()) {
 			ChatServer recipient = chatServerList.get(recp);
 			recipient.addMessage(message);
 			System.out.println(message.getFullString() + " submitted to " + recp + " from ChatServerList");
 		}
 	}
-	
-	public void stop(){
-		for (Map.Entry<String, ChatServer> entry : chatServerList.entrySet()){
+
+	public void stop() {
+		for (Map.Entry<String, ChatServer> entry : chatServerList.entrySet()) {
 			entry.getValue().interrupt();
 		}
 		chatServerList.clear();
 	}
-	
-	public void addPropertyChangeListener(PropertyChangeListener listener){
+
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
 		pcs.addPropertyChangeListener(listener);
+		this.listener = listener;
 	}
-	
-	public void removePropertyChangeListener(PropertyChangeListener listener){
+
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
 		pcs.removePropertyChangeListener(listener);
 	}
 
