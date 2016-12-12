@@ -16,7 +16,7 @@ public class AscoltoThread extends Thread {
 
 	public void run() {
 
-		while (true) { // Ciclo all'infinito così starà sempre in ascolto
+		while (true) { // Ciclo all'infinito cosï¿½ starï¿½ sempre in ascolto
 			try {
 
 				mex = inDalServer.readLine(); // Ricevo il messaggio dal server
