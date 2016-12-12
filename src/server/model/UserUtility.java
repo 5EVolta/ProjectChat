@@ -17,6 +17,9 @@ public class UserUtility {
 		return instance;
 	}
 	
+	private UserUtility(){
+	}
+	
 	public boolean login(String userId, String password){
 		return login.login(userId, password);
 	}
