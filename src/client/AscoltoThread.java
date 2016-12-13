@@ -8,21 +8,24 @@ public class AscoltoThread extends Thread {
 	String mex;
 	Socket miosocket;
 	BufferedReader inDalServer = null;
+	Finestra f1;
 
-	public AscoltoThread(Socket socket) throws IOException {
+	public AscoltoThread(Finestra f, Socket socket) throws IOException {
+		f1 = f;
 		miosocket = socket;
 		inDalServer = new BufferedReader(new InputStreamReader(miosocket.getInputStream()));
 	}
 
 	public void run() {
 
-		while (true) { // Ciclo all'infinito cosï¿½ starï¿½ sempre in ascolto
+		while (true) { // Ciclo all'infinito così starà sempre in ascolto
 			try {
 
 				mex = inDalServer.readLine(); // Ricevo il messaggio dal server
-				if (mex != null) {
-					System.out.println(mex); // lo mostro a video
-				}
+
+				if (mex != null)
+					f1.mostraMex(mex); // lo invio al main
+
 			} catch (Exception e) {
 			}
 		}

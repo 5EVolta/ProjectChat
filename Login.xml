@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<gente>
+       <persona id="1">
+		<nome>stefano</nome>
+		<cognome>baglio</cognome>
+		<password>stefano</password>
+	</persona>
+	<persona id="2">
+		<nome>michele</nome>
+		<cognome>barisi</cognome>
+		<password>michele</password>
+	</persona>	
+	<persona id="3">
+		<nome>matteo</nome>
+		<cognome>calcina</cognome>
+		<password>matteo</password>
+	</persona>	
+	<persona id="4">
+		<nome>lorenzo</nome>
+		<cognome>corrias</cognome>
+		<password>lorenzo</password>
+	</persona>	
+	<persona id="5">
+		<nome>simone</nome>
+		<cognome>deiana</cognome>
+		<password>simone</password>
+	</persona>	
+	<persona id="6">
+		<nome>giacomo</nome>
+		<cognome>formilan</cognome>
+		<password>giacomo</password>
+	</persona>
+	<persona id="7">
+		<nome>ivana</nome>
+		<cognome>kostic</cognome>
+		<password>ivana</password>
+	</persona>
+	<persona id="8">
+		<nome>erik</nome>
+		<cognome>martelli</cognome>
+		<password>erik</password>
+	</persona>
+	<persona id="9">
+		<nome>gabriele</nome>
+		<cognome>morelli</cognome>
+		<password>gabriele</password>
+	</persona>
+	<persona id="10">
+		<nome>enea</nome>
+		<cognome>prelaz</cognome>
+		<password>enea</password>
+	</persona>
+	<persona id="11">
+		<nome>virginia</nome>
+		<cognome>sandini</cognome>
+		<password>virginia</password>
+	</persona>
+	<persona id="12">
+		<nome>dragan</nome>
+		<cognome>vuletic</cognome>
+		<password>dragan</password>
+	</persona>
+	<persona id="13">
+		<nome>pietro</nome>
+		<cognome>wald</cognome>
+		<password>pietro</password>
+	</persona>
+</gente>
