@@ -73,6 +73,7 @@ public class View implements PropertyChangeListener {
 		butPort = new JButton("OK");
 		butPort.addActionListener(controller);
 		textPort = new JTextField("Porta");
+		textPort.setToolTipText("Porta Server");
 		// textPort.addKeyListener(controller); one day...
 
 		pan.setLayout(new GridBagLayout());
@@ -130,14 +131,16 @@ public class View implements PropertyChangeListener {
 		gbc.gridwidth = GridBagConstraints.REMAINDER;
 		pan.add(textLogScroll, gbc);
 
+		gbc.insets = new Insets(30, 5, 5, 5);
 		gbc.gridx = 1;
 		gbc.gridy = 3;
 		gbc.anchor = GridBagConstraints.FIRST_LINE_START;
 		pan.add(labMess, gbc);
 
+		gbc.insets = new Insets(5, 5, 5, 5);
 		gbc.gridx = 1;
 		gbc.gridy = 3;
-		gbc.anchor = GridBagConstraints.CENTER;
+		gbc.anchor = GridBagConstraints.PAGE_END;
 		gbc.gridwidth = GridBagConstraints.REMAINDER;
 		pan.add(textMessScroll, gbc);
 
@@ -176,6 +179,7 @@ public class View implements PropertyChangeListener {
 				try {
 					cs = (ChatServer) e.getNewValue();
 					textLog.append(cs.getUserId() + " connected\n");
+					textConn.append(cs.getUserId() + "\n");
 				} catch (Exception ex) {
 				}
 			}
@@ -183,6 +187,7 @@ public class View implements PropertyChangeListener {
 				try {
 					cs = (ChatServer) e.getOldValue();
 					textLog.append(cs.getUserId() + " disconnected\n");
+					textConn.setText(textConn.getText().replaceAll(cs.getUserId() + "\n", ""));
 				} catch (Exception ex) {
 				}
 			}
@@ -192,9 +197,9 @@ public class View implements PropertyChangeListener {
 			}
 		} else if (e.getOldValue() == null && e.getNewValue() instanceof Message) {
 			Message msg = (Message) e.getNewValue();
-			if(e.getSource() instanceof ChatServer && e.getPropertyName().equals("receivedMessage")){
+			if (e.getSource() instanceof ChatServer && e.getPropertyName().equals("receivedMessage")) {
 				textMess.append("Received: " + msg.getFullString() + "\n");
-			}else if(e.getSource() instanceof MessageSender && e.getPropertyName().equals("sentMessage")){
+			} else if (e.getSource() instanceof MessageSender && e.getPropertyName().equals("sentMessage")) {
 				textMess.append("Sent: " + msg.getFullString() + "\n");
 			}
 		}

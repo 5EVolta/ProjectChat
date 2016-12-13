@@ -24,9 +24,9 @@ public class Finestra extends JFrame {
 	JButton pwdButton = new JButton("Accedi");
 
 	JLabel l1 = new JLabel("Indirizzo IP Server: ");
-	TextField t1 = new TextField("192.168.5.139");
+	TextField t1 = new TextField("192.168.");
 	JLabel l11 = new JLabel("Porta Server: ");
-	TextField t11 = new TextField("4000");
+	TextField t11 = new TextField("");
 
 	JButton b1 = new JButton("Connetti");
 
