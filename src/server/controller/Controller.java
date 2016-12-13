@@ -42,8 +42,9 @@ public class Controller implements ActionListener {
 		try{
 			Integer port = Integer.parseInt(newPort);
 			servConn.changePort(port);
+			view.setEnabledButStart(true);
 		}catch(Exception e){}
-		view.setEnabledButStart(true);
+		
 	}
 
 	@Override
