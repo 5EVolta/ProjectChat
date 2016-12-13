@@ -1,4 +1,4 @@
-package server;
+package server.model;
 
 import java.security.NoSuchAlgorithmException;
 import java.sql.*;

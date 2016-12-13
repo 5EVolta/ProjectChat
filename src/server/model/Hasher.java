@@ -1,4 +1,4 @@
-package server;
+package server.model;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
