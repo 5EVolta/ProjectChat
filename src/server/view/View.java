@@ -11,6 +11,7 @@ import java.beans.PropertyChangeListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -19,11 +20,10 @@ import javax.swing.JTextField;
 import server.controller.Controller;
 import server.model.ChatServer;
 import server.model.ChatServerList;
-import server.model.Message;
 import server.model.MessageSender;
+import server.model.msg.Message;
 
 public class View implements PropertyChangeListener {
-
 	private JFrame f;
 	private JPanel pan;
 	private JLabel labConn, labLog, labMess;
@@ -74,7 +74,7 @@ public class View implements PropertyChangeListener {
 		butPort.addActionListener(controller);
 		textPort = new JTextField("Porta");
 		textPort.setToolTipText("Porta Server");
-		// textPort.addKeyListener(controller); one day...
+		textPort.addKeyListener(controller);
 
 		pan.setLayout(new GridBagLayout());
 		gbc = new GridBagConstraints();
@@ -152,6 +152,46 @@ public class View implements PropertyChangeListener {
 		f.pack();
 		f.setVisible(true);
 	}
+	
+	public void propertyChange(PropertyChangeEvent e) {
+
+		if (e.getSource() instanceof ChatServerList && e.getPropertyName().equals("chatServerList")) {
+			try {
+				ChatServer cs = null;
+				if (e.getOldValue() == null && e.getNewValue() != null) {
+					cs = (ChatServer) e.getNewValue();
+					this.userConnected(cs.getUserId());
+
+				} else if (e.getNewValue() == null && e.getOldValue() != null) {
+					cs = (ChatServer) e.getOldValue();
+					this.userDisconnected(cs.getUserId());
+
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		} else {
+			if (e.getNewValue() instanceof Message && e.getOldValue() == null) {
+				Message msg = (Message) e.getNewValue();
+				if (e.getSource() instanceof ChatServer && e.getPropertyName().equals("receivedMessage")) {
+					textMess.append("Received: " + msg.getFullString() + "\n");
+					
+				} else if (e.getSource() instanceof MessageSender && e.getPropertyName().equals("sentMessage")) {
+					textMess.append("Sent: " + msg.getFullString() + "\n");
+				}
+			}
+		}
+	}
+	
+	private void userConnected(String userId) {
+		textLog.append(userId + " connected\n");
+		textConn.append(userId + "\n");
+	}
+
+	private void userDisconnected(String userId) {
+		textLog.append(userId + " disconnected\n");
+		textConn.setText(textConn.getText().replaceAll(userId + "\n", ""));
+	}
 
 	public void setEnabledButStart(boolean state) {
 		butStart.setEnabled(state);
@@ -169,41 +209,8 @@ public class View implements PropertyChangeListener {
 	public String getPortText() {
 		return textPort.getText();
 	}
-
-	public void propertyChange(PropertyChangeEvent e) {
-
-		if (e.getPropertyName().equals("chatServerList") && e.getSource() instanceof ChatServerList) {
-
-			ChatServer cs = null;
-			if (e.getOldValue() == null && e.getNewValue() != null) {
-				try {
-					cs = (ChatServer) e.getNewValue();
-					textLog.append(cs.getUserId() + " connected\n");
-					textConn.append(cs.getUserId() + "\n");
-				} catch (Exception ex) {
-				}
-			}
-			if (e.getNewValue() == null && e.getOldValue() != null) {
-				try {
-					cs = (ChatServer) e.getOldValue();
-					textLog.append(cs.getUserId() + " disconnected\n");
-					textConn.setText(textConn.getText().replaceAll(cs.getUserId() + "\n", ""));
-				} catch (Exception ex) {
-				}
-			}
-		} else if (e.getPropertyName().equals("ChatServer") && e.getSource() instanceof ChatServer) {
-			if (e.getOldValue() == null && e.getNewValue() instanceof ChatServer) {
-				textLog.append("new ChatServer running\n");
-			}
-		} else if (e.getOldValue() == null && e.getNewValue() instanceof Message) {
-			Message msg = (Message) e.getNewValue();
-			if (e.getSource() instanceof ChatServer && e.getPropertyName().equals("receivedMessage")) {
-				textMess.append("Received: " + msg.getFullString() + "\n");
-			} else if (e.getSource() instanceof MessageSender && e.getPropertyName().equals("sentMessage")) {
-				textMess.append("Sent: " + msg.getFullString() + "\n");
-			}
-		}
-
+	
+	public void displayError(String errorText){
+		JOptionPane.showMessageDialog(f, errorText, "Error", JOptionPane.ERROR_MESSAGE);
 	}
-
 }

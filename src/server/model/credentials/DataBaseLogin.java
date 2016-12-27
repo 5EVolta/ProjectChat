@@ -1,9 +1,9 @@
-package server.model;
+package server.model.credentials;
 
 import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 
-public class LoginUtility {
+public class DataBaseLogin extends LoginUtility {
 	
 	private String dbServer = "jdbc:mysql://localhost/users"; //jdbc:mysql identifies the type of database
 	private String dbUsername = "root";                                //users_database is the table we refer to
@@ -27,7 +27,7 @@ public class LoginUtility {
 			isRegistered = false;
 		
 		
-		// I close all the connections or otherwise someone could get angry birds
+		// I close all the connections or otherwise someone could get angry
 		result.close();
 		query.close();
 		con.close();

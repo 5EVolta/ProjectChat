@@ -1,10 +1,8 @@
-package server.model;
+package server.model.credentials;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+
 import org.apache.commons.codec.binary.Hex;
 
 public class Hasher {

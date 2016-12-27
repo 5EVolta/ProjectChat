@@ -7,8 +7,9 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class MessageSender extends Thread {
+import server.model.msg.Message;
 
+public class MessageSender extends Thread {
 	private PropertyChangeSupport pcs;
 	private PrintWriter out = null;
 	private LinkedBlockingQueue<Message> messageQueue;
@@ -27,8 +28,7 @@ public class MessageSender extends Thread {
 		while (true) {
 			Message msg;
 			try {
-				msg = messageQueue.take(); // blocks if no messages are
-											// available
+				msg = messageQueue.take();
 			} catch (InterruptedException e1) {
 				e1.printStackTrace();
 				return;
@@ -45,7 +45,7 @@ public class MessageSender extends Thread {
 			isSuccessful = messageQueue.offer(message);
 		} while (!isSuccessful);
 	}
-	
+
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
 		pcs.addPropertyChangeListener(listener);
 	}

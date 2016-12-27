@@ -1,4 +1,4 @@
-package server.model;
+package server.model.credentials;
 
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
@@ -14,13 +14,13 @@ public class UserUtility {
 	}
 	
 	private UserUtility(){
-		login = new LoginUtility();
+		login = LoginUtility.getLoginUtility(LoginUtilityType.XML);
 	}
 	
-	public boolean login(String userId, String password){
+	public synchronized boolean login(String userId, String password){
 		try {
 			return login.login(userId, password);
-		} catch (NoSuchAlgorithmException | SQLException e) {
+		} catch (Exception e) {
 			System.out.println("Login exception in db connection :)");
 			e.printStackTrace();
 		}
