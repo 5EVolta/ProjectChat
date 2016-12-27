@@ -1,9 +1,9 @@
-package server.model.credentials;
+package server.model.loginandregister;
 
 import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 
-public class DataBaseLogin extends LoginUtility {
+public class DataBaseLogin implements LoginUtility {
 	
 	private String dbServer = "jdbc:mysql://localhost/users"; //jdbc:mysql identifies the type of database
 	private String dbUsername = "root";                                //users_database is the table we refer to

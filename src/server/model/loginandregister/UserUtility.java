@@ -1,7 +1,4 @@
-package server.model.credentials;
-
-import java.security.NoSuchAlgorithmException;
-import java.sql.SQLException;
+package server.model.loginandregister;
 
 public class UserUtility {
 	
@@ -14,7 +11,7 @@ public class UserUtility {
 	}
 	
 	private UserUtility(){
-		login = LoginUtility.getLoginUtility(LoginUtilityType.XML);
+		login = new TestLogin();
 	}
 	
 	public synchronized boolean login(String userId, String password){

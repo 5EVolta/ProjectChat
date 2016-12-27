@@ -1,6 +1,6 @@
-package server.model.credentials;
+package server.model.loginandregister;
 
-public class XmlLogin extends LoginUtility {
+public class XmlLogin implements LoginUtility {
 
 	@Override
 	public boolean login(String userId, String password) {

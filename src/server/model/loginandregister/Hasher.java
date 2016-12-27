@@ -1,4 +1,4 @@
-package server.model.credentials;
+package server.model.loginandregister;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
