@@ -18,7 +18,7 @@ public class Login {
 		try {
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-			Document doc = dBuilder.parse("Login.xml");
+			Document doc = dBuilder.parse("files/Login.xml");
 
 			NodeList nList = doc.getElementsByTagName("persona");
 

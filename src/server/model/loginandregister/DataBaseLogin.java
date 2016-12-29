@@ -13,9 +13,7 @@ public class DataBaseLogin implements LoginUtility {
 		
 		boolean isRegistered = false;
 		String hashedPassword = Hasher.hash(password);
-		
-		System.out.println(hashedPassword);
-		
+				
 		Connection con = DriverManager.getConnection(dbServer, dbUsername, dbPassword);
 		PreparedStatement query = con.prepareStatement("SELECT * FROM users WHERE username = '"  + username + "' AND password = '" + hashedPassword + "'"); //password should be hashedPassword
 		ResultSet result = query.executeQuery();
