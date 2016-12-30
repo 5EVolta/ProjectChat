@@ -1,4 +1,4 @@
-package server.model.loginandregister;
+package server.model.data;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -7,7 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class DatabaseLogin implements LoginUtility {
-	
 	private String dbServer = "jdbc:mysql://localhost/users"; //jdbc:mysql identifies the type of database
 	private String dbUsername = "root";                                //users_database is the table we refer to
 	private String dbPassword = "";

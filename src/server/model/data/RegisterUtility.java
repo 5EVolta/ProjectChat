@@ -1,4 +1,4 @@
-package server.model.loginandregister;
+package server.model.data;
 
 import java.security.NoSuchAlgorithmException;
 import java.sql.*;

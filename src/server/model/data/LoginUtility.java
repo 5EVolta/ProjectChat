@@ -1,4 +1,4 @@
-package server.model.loginandregister;
+package server.model.data;
 
 public interface LoginUtility {
 

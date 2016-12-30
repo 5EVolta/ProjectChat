@@ -9,7 +9,7 @@ import java.net.Socket;
 import java.security.InvalidParameterException;
 import java.util.Date;
 
-import server.model.loginandregister.UserUtility;
+import server.model.data.UserUtility;
 import server.model.msg.Message;
 
 public class ChatServer extends Thread {

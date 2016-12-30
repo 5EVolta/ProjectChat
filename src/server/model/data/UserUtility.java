@@ -1,7 +1,6 @@
-package server.model.loginandregister;
+package server.model.data;
 
 public class UserUtility {
-	
 	private LoginUtility login;
 	//private RegisterUtility register;
 	private static UserUtility instance = new UserUtility();
