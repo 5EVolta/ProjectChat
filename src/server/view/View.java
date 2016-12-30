@@ -74,8 +74,11 @@ public class View implements PropertyChangeListener {
 		butPort.addActionListener(controller);
 		textPort = new JTextField("Porta");
 		textPort.setToolTipText("Porta Server");
+		DefaultTextCleaner tc = new DefaultTextCleaner("Porta");
+		textPort.addFocusListener(tc);
+		textPort.addMouseListener(tc);
 		textPort.addKeyListener(controller);
-
+		
 		pan.setLayout(new GridBagLayout());
 		gbc = new GridBagConstraints();
 
