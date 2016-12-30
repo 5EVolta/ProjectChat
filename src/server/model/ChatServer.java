@@ -6,7 +6,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.security.InvalidParameterException;
 import java.util.Date;
+
+import server.model.data.UserUtility;
+import server.model.msg.Message;
 
 public class ChatServer extends Thread {
 
@@ -36,38 +40,25 @@ public class ChatServer extends Thread {
 		}
 	}
 
-	public void addMessage(Message message) {
-		if (mSender.isAlive()) {
-			mSender.addMessage(message);
-		} else {
+	public void run() {
+		// pcs.firePropertyChange("ChatServer", null, this);
+		try {
+			Message loginMessage = this.getFirstMessage();
+			this.tryLogin(loginMessage);
+			this.connectToChatServerList();
+			
+			System.out.println("ChatServer: " + this.getUserId() + " init completed!");
+			
+			while (true) {
+				readMessage();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 			this.interrupt();
 		}
 	}
-
-	public String getUserId() {
-		return this.userId;
-	}
-
-	@Override
-	public void interrupt() {
-		System.out.println(this.getUserId() + " interrupted");
-		chatServerList.disconnect(this.userId);
-		mSender.interrupt();
-		super.interrupt();
-	}
-
-	private boolean tryLogin(Message msg) {
-		if (msg.isLoginMessage()) {
-			UserUtility utils = UserUtility.getInstance();
-			if (!utils.login(msg.getSender(), msg.getMsg())) {
-				System.out.println("Login failed");
-				this.interrupt();
-			}
-		}
-		return msg.isLoginMessage();
-	}
-
-	private void init() throws IOException {
+	
+	private Message getFirstMessage() throws IOException {
 		String str = "";
 		long terminInMillis = new Date().getTime() + 60000;
 		Date termin = new Date(terminInMillis);
@@ -75,41 +66,65 @@ public class ChatServer extends Thread {
 			str = in.readLine();
 		} while (str == null && new Date().before(termin));
 		Message msg = new Message(str);
-
 		this.userId = msg.getSender();
-		
-		if (this.tryLogin(msg)) {
-			if (!chatServerList.connect(msg.getSender(), this)) {
+		return msg;		
+	}
+	
+	private void tryLogin(Message msg) {
+		if (msg.isLoginMessage()) {
+			UserUtility utils = UserUtility.getInstance();
+			if (!utils.login(msg.getSender(), msg.getMsg())) {
+				System.out.println("Login failed");
 				this.interrupt();
 			}
+		}else{
+			throw new InvalidParameterException("Login failed");
 		}
-		System.out.println("ChatServer: " + this.getUserId() + " init completed!");
 	}
-
-	public void run() {
-		//pcs.firePropertyChange("ChatServer", null, this);
-		Message msg;
-		String str;
-		try {
-			this.init();
-			/** Reads messages from client */
-			while (true) {
-				str = in.readLine();
-				if (str != null && !str.equals("")) {
-					msg = new Message(str);
-					if (msg.isValid() && msg.getSender().equals(this.userId)) {
-						chatServerList.submit(msg);
-						pcs.firePropertyChange("receivedMessage", null, msg);
-						System.out.println("Received " + msg.getFullString());
-					}
-				}
-			}
-		} catch (IOException e) {
+	
+	private void connectToChatServerList(){
+		try{
+		this.chatServerList.connect(this.getUserId(), this);
+		}catch(InvalidParameterException e){
 			e.printStackTrace();
 			this.interrupt();
 		}
 	}
+
+	private void readMessage() throws IOException {
+		Message msg;
+		String str = in.readLine();
+		if (str != null && !str.equals("")) {
+			msg = new Message(str);
+			if (msg.isValid() && msg.getSender().equals(this.userId)) {
+				chatServerList.submit(msg);
+				pcs.firePropertyChange("receivedMessage", null, msg);
+				System.out.println("Received " + msg.getFullString());
+			}
+		}
+	}
 	
+	@Override
+	public void interrupt() {
+		System.out.println(this.getUserId() + " interrupted");
+		chatServerList.disconnect(this.userId);
+		mSender.interrupt();
+		super.interrupt();
+	}
+	
+	public String getUserId() {
+		return this.userId;
+	}
+	
+	public void addMessage(Message message) {
+		if (mSender.isAlive() && !mSender.isInterrupted()) {
+			mSender.addMessage(message);
+			System.out.println(getUserId() + "Message added to mSender");
+		} else {
+			this.interrupt();
+		}
+	}
+
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
 		pcs.addPropertyChangeListener(listener);
 		mSender.addPropertyChangeListener(listener);

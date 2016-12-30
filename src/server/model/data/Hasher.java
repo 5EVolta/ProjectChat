@@ -1,17 +1,20 @@
-package server.model;
+package server.model.data;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+
 import org.apache.commons.codec.binary.Hex;
 
 public class Hasher {
 	
-	public static String hash(String clearText) throws NoSuchAlgorithmException{
+	public static String hash(String clearText){
 		String hashedText = "";
-		MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");  
+		MessageDigest messageDigest = null;
+		try {
+			messageDigest = MessageDigest.getInstance("SHA-256");
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}  
 		messageDigest.update(clearText.getBytes());
 		hashedText = Hex.encodeHexString(messageDigest.digest());
 		return hashedText;

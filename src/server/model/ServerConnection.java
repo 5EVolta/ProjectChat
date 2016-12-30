@@ -4,40 +4,36 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-//TODO: use a thread pls boi
-public class ServerConnection {
-
+public class ServerConnection implements Runnable {
 	private int serverPort = -1;
+	private ServerSocket serverSock;
 	private ChatServerList list;
-	private Runnable serverConnector;
-	private Thread running; 
-	
+	private Thread running;
 
 	public ServerConnection(ChatServerList list) {
 		if (list == null) {
 			throw new IllegalArgumentException("ChatServerList can't be null");
 		}
 		this.list = list;
-		
-		serverConnector = () -> {
-			System.out.println("new ServerConnector running!"); //TODO: remove
-			ServerSocket serverSock = null;
-			try {
-				serverSock = new ServerSocket(this.serverPort);
-				Socket sock;
-				while(true){
-					sock = serverSock.accept();
-					new ChatServer(sock, list).start();
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-				try {
-					serverSock.close();
-				} catch (IOException | NullPointerException e1) {
-					e1.printStackTrace();
-				}
-			}
-		};
+	}
+
+	public void run() {
+		System.out.println("new ServerConnector running!"); // TODO: remove
+		try {
+			this.acceptConnections();
+			serverSock.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void acceptConnections() throws IOException {
+		this.serverSock = new ServerSocket(this.serverPort);
+		Socket sock;
+		while (true) {
+			sock = serverSock.accept();
+			new ChatServer(sock, list).start();
+		}
 	}
 
 	public ServerConnection(int serverPort, ChatServerList list) {
@@ -47,35 +43,32 @@ public class ServerConnection {
 	}
 
 	public void start() {
-		if(running == null || !running.isInterrupted()){
-			running = new Thread(serverConnector);
+		if ((running == null || running.isInterrupted()) && portIsSet()) {
+			running = new Thread(this);
 			running.start();
+		} else{
+			throw new IllegalStateException("ServerConnection can't be started port isn't set");
 		}
 	}
 
 	public void stop() {
-		if(running != null){
+		if (running != null && !running.isInterrupted()) {
 			running.interrupt();
-			running = null;
 			System.out.println("ServerConnector stopped");
 		}
 	}
-	
-	private void setPort(int serverPort) {
+
+	public void setPort(int serverPort) {
+		if (this.running != null && !this.running.isInterrupted()) {
+			throw new IllegalStateException("serverPort can't be changed when ConnectionServer is running");
+		}
 		if (serverPort < 1024 || serverPort > 65535) {
 			throw new IllegalArgumentException("Invalid port number");
 		}
 		this.serverPort = serverPort;
 	}
 
-	public void changePort(int serverPort) {
-		if (this.running != null && this.running.isAlive()) {
-			throw new IllegalStateException("serverPort can't be changed when ConnectionServer is running");
-		}
-		this.setPort(serverPort);
-	}
-	
-	public boolean portIsSet(){
+	public boolean portIsSet() {
 		return serverPort != -1;
 	}
 }
