@@ -117,8 +117,9 @@ public class ChatServer extends Thread {
 	}
 	
 	public void addMessage(Message message) {
-		if (!mSender.isInterrupted()) {
+		if (mSender.isAlive() && !mSender.isInterrupted()) {
 			mSender.addMessage(message);
+			System.out.println(getUserId() + "Message added to mSender");
 		} else {
 			this.interrupt();
 		}

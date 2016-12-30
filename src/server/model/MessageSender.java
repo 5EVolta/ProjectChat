@@ -29,13 +29,13 @@ public class MessageSender extends Thread {
 			Message msg;
 			try {
 				msg = messageQueue.take();
+				out.println(msg.getFullString());
+				pcs.firePropertyChange("sentMessage", null, msg);
+				System.out.println(msg.getFullString() + " sent");
 			} catch (InterruptedException e1) {
 				e1.printStackTrace();
-				return;
+				//return;
 			}
-			out.println(msg.getFullString());
-			pcs.firePropertyChange("sentMessage", null, msg);
-			System.out.println(msg.getFullString() + " sent");
 		}
 	}
 

@@ -11,14 +11,14 @@ public class UserUtility {
 	}
 	
 	private UserUtility(){
-		login = new TestLogin();
+		login = new XMLLogin();
 	}
 	
 	public synchronized boolean login(String userId, String password){
 		try {
 			return login.login(userId, password);
 		} catch (Exception e) {
-			System.out.println("Login exception in db connection :)");
+			System.out.println("Login exception");
 			e.printStackTrace();
 		}
 		return false;
