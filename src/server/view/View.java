@@ -18,6 +18,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import server.controller.Controller;
+import server.controller.DefaultTextCleaner;
 import server.model.ChatServer;
 import server.model.ChatServerList;
 import server.model.MessageSender;
