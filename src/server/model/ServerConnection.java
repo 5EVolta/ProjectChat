@@ -9,6 +9,12 @@ public class ServerConnection implements Runnable {
 	private ServerSocket serverSock;
 	private ChatServerList list;
 	private Thread running;
+	
+	public ServerConnection(int serverPort, ChatServerList list) {
+		this(list);
+		this.setPort(serverPort);
+		this.serverPort = serverPort;
+	}
 
 	public ServerConnection(ChatServerList list) {
 		if (list == null) {
@@ -34,12 +40,6 @@ public class ServerConnection implements Runnable {
 			sock = serverSock.accept();
 			new ChatServer(sock, list).start();
 		}
-	}
-
-	public ServerConnection(int serverPort, ChatServerList list) {
-		this(list);
-		this.setPort(serverPort);
-		this.serverPort = serverPort;
 	}
 
 	public void start() {
