@@ -12,7 +12,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public class CredentialsLoader {
+public class XMLLoader {
 	private String path = "files/users.xml";
 	private Document doc;
 

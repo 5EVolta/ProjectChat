@@ -5,12 +5,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class XMLLogin implements LoginUtility {
-	private CredentialsLoader loader;
+	private XMLLoader loader;
 	private Map<String, String> credentials;
 
 	public XMLLogin() {
 		credentials = Collections.synchronizedMap(new HashMap<>());
-		loader = new CredentialsLoader();
+		loader = new XMLLoader();
 		try {
 			credentials = loader.load();
 		} catch (Exception e) {
