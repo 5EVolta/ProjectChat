@@ -1,9 +1,12 @@
 package server.model.data;
 
-public class TestLogin implements LoginUtility {
-	
-	public boolean login(String userId, String password){
+public class TestLogin extends LoginUtility {
+
+	@Override
+	protected boolean checkCredentials(String userId, String hashedPassword) {
 		return true;
 	}
+	
+	
 
 }

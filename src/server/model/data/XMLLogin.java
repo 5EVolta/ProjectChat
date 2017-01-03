@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class XMLLogin implements LoginUtility {
+public class XMLLogin extends LoginUtility {
 	private XMLLoader loader;
 	private Map<String, String> credentials;
 
@@ -19,10 +19,9 @@ public class XMLLogin implements LoginUtility {
 	}
 
 	@Override
-	public synchronized boolean login(String userId, String password) {
-		password = Hasher.hash(password);
+	protected boolean checkCredentials(String userId, String hashedPassword) {
 		return credentials.containsKey(userId) && 
-				credentials.get(userId).equals(password);
+				credentials.get(userId).equals(hashedPassword);
 	}
 
 }
