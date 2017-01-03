@@ -12,7 +12,7 @@ public class Message {
 		if(fullString != null){
 			recipient = SimpleProtocol.getRecipient(fullString);
 			sender = SimpleProtocol.getSender(fullString);
-			msg = SimpleProtocol.getMess(fullString);
+			msg = SimpleProtocol.getMessage(fullString);
 		}
 	}
 	

@@ -11,7 +11,7 @@ public class SimpleProtocol {
 		return str.split(":")[0];
 	}
 
-	public static String getMess(String fullString) {
+	public static String getMessage(String fullString) {
 		return fullString.substring(fullString.indexOf(':') + 1);
 	}
 	
